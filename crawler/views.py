@@ -1,3 +1,4 @@
+import os
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from rest_framework.parsers import JSONParser
@@ -14,6 +15,37 @@ from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import viewsets
 from django.shortcuts import get_object_or_404
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.conf import settings
+
+
+class CsvViewSet(viewsets.ViewSet):  # viewsets.ViewSet 需要將以下function寫出
+                                     # viewsets 需要以register的方式註冊
+    def list(self, request):
+        return
+
+    def create(self, request):  # put
+        result_string = ""
+        data = request.data
+        query = data.pop('file')
+        print(query)
+        print(query[0].open())
+        filename = 'csv_file/' + str(query[0].open())
+        try:
+            os.remove(filename)
+        except:
+            print(filename + '未建立')
+        print(filename)
+        data = query[0].read()
+        path = default_storage.save(filename, ContentFile(data))
+        return Response(result_string)
+
+    def retrieve(self, request, pk=None):
+        return
+
+    def update(self, request, pk=None):
+        return
 
 #---------------------------版本5-------------------------#
 
@@ -36,7 +68,6 @@ class ArticleGenericViewSet(
 
     def delete(self, request, id):
         return self.destroy(request, id)
-
 
 #---------------------------版本4-------------------------#
 
@@ -81,8 +112,8 @@ class GenericAPIView(
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
     lookup_field = 'id'  # 加此段才能正確put資訊
-    authentication_classes = [SessionAuthentication, BasicAuthentication]  # 先確定Session認證 若無則再確認Basic認證
-    # authentication_classes = [TokenAuthentication]  # 在/admin中新增  最後在postman->Header->key: Authorization value:Token ....
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]  # 先確定Session認證 若無則再確認Basic認證
+    authentication_classes = [TokenAuthentication]  # 在/admin中新增  最後在postman->Header->KEY: Authorization value:TOKEN c08a5bb40ed8ac01d3ee5f86bb686a8a019178e9
     permission_classes = [IsAuthenticated]
 
     def get(self, request, id=None):
@@ -99,7 +130,6 @@ class GenericAPIView(
 
     def delete(self, request, id):
         return self.destroy(request, id)
-
 
 #---------------------------版本2-------------------------#
 
@@ -179,9 +209,6 @@ def article_detail(request, pk):
     elif request.method == 'DELETE':
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
 
 
 

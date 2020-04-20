@@ -4,3 +4,5 @@
 
 python manage.py runserver
 ```
+
+預覽位置 http://127.0.0.1:8000/crawler/article/

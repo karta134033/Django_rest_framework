@@ -6,6 +6,7 @@ from crawler import views
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
+router.register(r'csv', views.CsvViewSet, basename='csv')  # 儲存csv用
 
 urlpatterns = [
     path('', include(router.urls)),
